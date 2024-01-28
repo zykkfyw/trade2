@@ -223,8 +223,8 @@ class TradingBot:
             print(f'Check point 8')
             qty = self._calculate_qty_to_trade(current_price, total_funds, symbol)
             print(f'Check point 9')
-            actual_purchace_price = round(round(qty,5) * current_price,2)
-            allowable_purchase_per_trade = round(total_funds * self.MAX_SINGLE_TRADE_PERCENTAGE,2)
+            actual_purchace_price = round(round(qty,5) * current_price,1)
+            allowable_purchase_per_trade = round(total_funds * self.MAX_SINGLE_TRADE_PERCENTAGE,1)
             if ( actual_purchace_price > allowable_purchase_per_trade) or ( qty == 0 ):
                 return "Trade exceeds limit", 403
             print(f'Check point 10')
