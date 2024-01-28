@@ -80,6 +80,7 @@ class TradingBot:
                     if round(( self._get_current_price(symbol),5)  > ( entry_price + self.MIN_EXIT_PRICE )): 
                         sell_order = self.api.submit_order(symbol=symbol, qty=qty, side='sell', type='market', time_in_force='gtc')
                 if self._is_asset_being_traded(symbol) == False:
+                    self.purchase_price.pop(symbol)
                     print(f"SOLD ... {symbol} @  Current_Price = {round(self._get_current_price(symbol),5)} on a Sell Signal")
                     break
                 time.sleep(self.RETRY_WAIT)
@@ -111,6 +112,10 @@ class TradingBot:
                     symbol = symbol.replace("USD", "/USD")
                 current_price = pos._raw.get("current_price")
                 entry_price =  float(current_price) + float(pos._raw.get("unrealized_pl"))
+                try:
+                    self.purchase_price[symbol] = entry_price
+                except:
+                    pass
                 stop_loss = entry_price - (entry_price * 0.01)
                 take_profit = entry_price + (float(self.profit_loss_ratio) * (entry_price - stop_loss))
                 # Start a thread to monitor and execute the sell order
@@ -147,6 +152,10 @@ class TradingBot:
                 #Exit the thread if the position was closed
                 if self._is_asset_being_traded(symbol) == False:
                     print(f"{symbol} ---> The position is no longer being traded ...Stopping the monitoring")
+                    try:
+                        self.purchase_price.pop(symbol)
+                    except:
+                        pass
                     break
 
                 current_price = self._get_current_price(symbol)
@@ -166,6 +175,10 @@ class TradingBot:
                     sell_order = self.api.submit_order(symbol=symbol, qty=qty, side='sell', type='market', time_in_force='gtc')
                     if sell_order.status == 'filled':
                         print(f"SOLD @ ( {profit_loss} )... {symbol} ---> Current_Price = {round(current_price,5)} Take_Profit = {round(take_profit,5)} Stop_Loss = {round(stop_loss,5)}")
+                        try:
+                            self.purchase_price.pop(symbol)
+                        except:
+                            pass
                         break
             except Exception as e:
                 print(f"Error with sell order for {symbol}: {e}")
@@ -182,7 +195,8 @@ class TradingBot:
                 return f"{type.upper()} is not a valid order type. Use Buy or Sell as order type!", 400
             print(f'Check point 2')
             # Check if the symbol is already being traded. Is triggerd by a sell symbol Stop the trade
-            if self._is_asset_being_traded(symbol):
+            
+            if (self._is_asset_being_traded(symbol)) or (symbol in self.purchase_price):
                 if type.lower() == "sell":
                     print(f"Check point 1.1")
                     entry_price = round(self.get_entry_price(symbol),5)
@@ -226,6 +240,10 @@ class TradingBot:
                 pass
             print(f'Check point 13')
             if buy_order.status == 'rejected':
+                try:
+                    self.purchase_price.pop(symbol)
+                except:
+                    pass
                 return f"Buy order for {symbol} rejected: {buy_order.rejected_reason}", 404
             print(f'Check point 14')
             # Start a thread to monitor and execute the sell order
