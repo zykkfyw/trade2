@@ -13,7 +13,7 @@ class TradingBot:
     profit_loss_ratio = 1.0 # this value is the profit to loss ratio in percentage
     MAX_RETRIES = 5  # Maximum number of retries for selling a position
     RETRY_WAIT = 30  # Wait time (in seconds) between retries
-    MIN_EXIT_PRICE = 25 # The minimum amount in dollards below the take_profit price a trade can be exited on
+    MIN_EXIT_PRICE = 25 # The minimum amount in below the take_profit price a trade can be exited on
     
     def __init__(self, api_key, api_secret, base_url):
         """Initialize the trading bot with Alpaca API credentials."""
@@ -70,7 +70,7 @@ class TradingBot:
         except:
             return qty  
 
-    def _close_order(self, symbol, type):
+    def _close_order(self, symbol):
         # Close a order
         try:
             while 1:
