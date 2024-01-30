@@ -206,7 +206,10 @@ class TradingBot:
                     else:
                         return f"Trade was not closed on a Sell Signal because ... {symbol} @ Current_Price = {round(self._get_current_price(symbol), 5)} < @ Entry_Price {entry_price} + min_exit_price {self.MIN_EXIT_PRICE} = {entry_price + self.MIN_EXIT_PRICE}", 200
                 else:
-                    return f"Asset {symbol} is already being traded .. skipping buying another {symbol}", 401
+                    if self._is_asset_being_traded(symbol):
+                        return f"Asset {symbol} is already being traded .. skipping buying another {symbol}", 401
+                    else:
+                        return f"Asset {symbol} iwas not sold .. only Buy orders are being processed", 406
         except Exception as e:
             print(f'Error 405 --> {e}')
             return f"Error: {e}", 405
