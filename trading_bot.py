@@ -30,10 +30,14 @@ class TradingBot:
         try:
             quote = self.api.get_bars(symbol, TimeFrame.Minute, limit=1).df.iloc[-1]['close']
             return quote
-        except Exception as e:
+        except Exception as e:           
             # If an exception occurs when fetching data from Alpaca, try an alternative source
-            response = requests.get(f"https://data.alpaca.markets/v1beta3/crypto/us/latest/quotes?symbols={symbol}").text
-            quote = json.loads(response).get('quotes').get(symbol).get('ap')
+            quote = 0.0
+            try:
+                response = requests.get(f"https://data.alpaca.markets/v1beta3/crypto/us/latest/quotes?symbols={symbol}").text
+                quote = json.loads(response).get('quotes').get(symbol).get('ap')
+            except:
+                pass
             return quote
 
     def _is_asset_being_traded(self, symbol):
@@ -147,7 +151,7 @@ class TradingBot:
                     self.purchase_price[symbol] = self.get_entry_price(symbol)
                 except:
                     pass
-                if round(current_price, 5) >= round(take_profit, 5) or round(current_price, 5) <= round(stop_loss, 5):
+                if ((round(current_price, 5) >= round(take_profit, 5)) or (round(current_price, 5) <= round(stop_loss, 5))) and (current_price > 0):
                     if round(current_price, 5) >= round(take_profit, 5):
                         profit_loss = "PROFIT"
                     else:
