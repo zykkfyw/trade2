@@ -82,8 +82,10 @@ class TradingBot:
         qty = max_trade_funds / current_price
         if self.api.get_asset(symbol).fractionable:
             if self.api.get_asset(symbol)._raw.get("class").lower() == "crypto":
+                self.MIN_EXIT_PRICE = 50
                 return qty  # Return fractional quantity for crypto assets
             else:
+                self.MIN_EXIT_PRICE = 2
                 return int(qty)
         else:
             return int(qty)
