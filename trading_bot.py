@@ -99,7 +99,7 @@ class TradingBot:
                 if pos._raw.get("asset_class").lower() == "crypto":
                     symbol = symbol.replace("USD", "/USD")
                 current_price = pos._raw.get("current_price")
-                entry_price = float(current_price) + float(pos._raw.get("unrealized_pl"))
+                entry_price = float(pos._raw.get("avg_entry_price"))
                 try:
                     self.purchase_price[symbol] = entry_price
                 except:
@@ -120,7 +120,7 @@ class TradingBot:
                 symbol = pos._raw.get("symbol")
                 if symbol.lower() == pos._raw.get("symbol").replace("/", "").lower():
                     current_price = pos._raw.get("current_price")
-                    entry_price = float(current_price) + float(pos._raw.get("unrealized_pl"))
+                    entry_price = float(pos._raw.get("avg_entry_price"))
                     return round(entry_price, 5)
             if entry_price == 0:
                 return round(self._get_current_price(symbol), 5)
