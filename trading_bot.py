@@ -10,7 +10,7 @@ class TradingBot:
 
     MAX_TOTAL_PERCENTAGE = 0.20  # Maximum percentage of total funds for active trades
     MAX_SINGLE_TRADE_PERCENTAGE = 0.02  # Maximum percentage of total funds for a single trade
-    profit_loss_ratio = 1.0 # this value is the profit to loss ratio in percentage
+    profit_loss_ratio = 2.0 # this value is the profit to loss ratio in percentage
     MAX_RETRIES = 5  # Maximum number of retries for selling a position
     RETRY_WAIT = 30  # Wait time (in seconds) between retries
     MIN_EXIT_PRICE = 25 # The minimum amount in below the take_profit price a trade can be exited on
